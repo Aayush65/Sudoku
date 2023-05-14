@@ -11,4 +11,10 @@ function formatSudoku(sudoku: number[][]): number[][] {
     return newSudoku;
 } 
 
-export default formatSudoku;
+function formatIndex(i: number, j: number): number[] {
+    const newRow = Math.floor(i / 3) * 3 + Math.floor(j / 3); 
+    const newCol = (i % 3) * 3 + j % 3;
+    return [newRow, newCol];
+}
+
+export { formatSudoku, formatIndex };
