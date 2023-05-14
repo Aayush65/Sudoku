@@ -5,11 +5,11 @@ import './App.css';
 
 declare global {
   interface Array<T> {
-    has(subArray: number[]): boolean;
+    has(subArray: [number, number]): boolean;
   }
 }
 
-Array.prototype.has = function<T>(subArray: number[]): boolean {
+Array.prototype.has = function(subArray: [number, number]): boolean {
   for (let i = 0; i < this.length; i++) {
     if (this[i][0] == subArray[0] && this[i][1] == subArray[1])
       return true;
@@ -31,7 +31,15 @@ function App() {
     // checking for invalids
     const newInvalids = isValid(grid);
     if (newInvalids.length) {
-      setInValids([...inValids, newInvalids]);
+      setInValids([newInvalids]);
+    }
+    else
+      setInValids([]);
+    
+    // checking for invalids in the same row, column or box
+    const invalids = isValid(newGrid);
+    if (invalids.length) {
+      setInValids([invalids]);
     }
     setGrid(newGrid);
   };
