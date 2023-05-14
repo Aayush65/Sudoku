@@ -1,7 +1,7 @@
-import formatSudoku from "./formatSudoku";
+import { formatSudoku, formatIndex } from "./formatSudoku";
 
 // Check if the sudoku is valid
-function isValid(grid: number[][]): boolean {
+function isValid(grid: number[][]): number[] {
   const sudoku = formatSudoku(grid);
 
   // checking row
@@ -11,7 +11,7 @@ function isValid(grid: number[][]): boolean {
       if (!sudoku[i][j])
         continue;
       if (row.has(sudoku[i][j]))
-        return false;
+        return formatIndex(i, j);
       row.add(sudoku[i][j]);
     }    
   }
@@ -23,12 +23,13 @@ function isValid(grid: number[][]): boolean {
       if (!sudoku[j][i])
         continue;
       if (col.has(sudoku[j][i]))
-        return false;
+        return formatIndex(j, i);
       col.add(sudoku[j][i]);
     }    
   }
 
   // checking box
+  // TODO: Error in many cases
   for (let i = 0; i < 9; i += 3) {
     const box = new Set();
     for (let j = 0; j < 9; j += 3) {
@@ -38,12 +39,12 @@ function isValid(grid: number[][]): boolean {
       if (!sudoku[x][y])
         continue;
       if (box.has(sudoku[x][y]))
-        return false;
+        return formatIndex(x, y);
       box.add(sudoku[x][y]);
     }
   }
 
-  return true;
+  return [];
 };
 
 export default isValid
