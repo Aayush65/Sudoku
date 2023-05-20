@@ -31,17 +31,10 @@ function App() {
     // checking for invalids
     const newInvalids = isValid(grid);
     if (newInvalids.length) {
-      setInValids([newInvalids]);
+      setInValids(newInvalids);
     }
     else
       setInValids([]);
-    
-    // checking for invalids in the same row, column or box
-    const invalids = isValid(newGrid);
-    if (invalids.length) {
-      setInValids([invalids]);
-    }
-    setGrid(newGrid);
   };
   
   function handleSubmit() {
