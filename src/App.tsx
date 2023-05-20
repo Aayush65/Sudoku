@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import solveSudoku from './sudoku';
 import isValid from './validSudoku';
 import './App.css';
@@ -8,16 +8,10 @@ import { formatSudoku } from './formatSudoku';
 function App() {
 
 	const [grid, setGrid] = useState<number[][]>(Array(9).fill('').map(() => Array(9).fill(0)));
-	const [solving, setSolving] = useState(false);
 	const [inValids, setInValids] = useState<boolean[][]>(Array(9).fill(false).map(() => Array(9).fill(false)));
+	const [fixed, setFixed] = useState<boolean[][]>(Array(9).fill(false).map(() => Array(9).fill(false)));
+	const [solving, setSolving] = useState(false);
 	const [isFilling, setIsFilling] = useState(false);
-
-	useEffect(() => {
-		if (isFilling) {
-			handleFill();
-			setIsFilling(false);
-		}
-	}, [])
 
 	function handleChange(row: number, col: number, val: number) {
 		if (val > 9 || val < 0) return;
@@ -53,14 +47,35 @@ function App() {
 	function handleReset() {
 		setGrid(Array(9).fill('').map(() => Array(9).fill(0)));
 		setInValids(Array(9).fill(false).map(() => Array(9).fill(false)));
+		setFixed(Array(9).fill(false).map(() => Array(9).fill(false)));
 	};
 
 	async function handleFill() {
 		setIsFilling(true);
+		handleReset();
 		const apiCall = await fetch('https://sugoku.onrender.com/board?difficulty=medium');
 		const data = await apiCall.json();
 		const randomSudoku = formatSudoku(data.board);
+
+		const toBeFixed = Array(9).fill(false).map(() => Array(9).fill(false));
+		for (let i = 0; i < 9; i ++)
+			for (let j = 0; j < 9; j ++)
+				if (randomSudoku[i][j]) toBeFixed[i][j] = true;
+		setFixed(toBeFixed);
+		
+		const toBeInvalids = [...inValids];
+		for (let i = 0; i < 9; i ++)
+			for (let j = 0; j < 9; j ++)
+				if (randomSudoku[i][j]) toBeInvalids[i][j] = true;
+		setInValids(toBeInvalids);
+		
+		// checking for invalids
+		const newInvalids = isValid(randomSudoku);
+		if (newInvalids.length)
+			setInValids(newInvalids);
+
 		setGrid(randomSudoku);
+		setIsFilling(false);
 	}
 
 	return (
@@ -70,7 +85,7 @@ function App() {
 					<div key={r} className='w-[9rem] h-[9rem] flex justify-center flex-wrap'>
 						{row.map((col, c) => (
 							<div key={c} className='w-[3rem] h-[3rem] border-white border-2'>
-								<input value={col ? col : ''} className={`w-full h-full text-center text-[white] focus:bg-[#4f4f4f] hover:cursor-pointer focus:hover:cursor-pointer ${inValids[r][c] ? 'bg-[#dc2d2d]' : ''} ${solving ? 'cursor-not-allowed' : ''}`} onChange={(e) => { handleChange(r, c, parseInt(e.target.value.slice(-1)) || 0) }} />
+								<input disabled={fixed[r][c]} value={col ? col : ''} className={`w-full h-full text-center text-[white] focus:bg-[#4f4f4f] hover:cursor-pointer focus:hover:cursor-pointer ${inValids[r][c] && !fixed[r][c] ? 'bg-[#dc2d2d]' : ''} ${solving ? 'cursor-not-allowed' : ''}`} onChange={(e) => { handleChange(r, c, parseInt(e.target.value.slice(-1)) || 0) }} />
 							</div>
 						))}
 					</div>
@@ -78,7 +93,7 @@ function App() {
 			</div>
 			<div className='flex justify-around'>
 				<button type='button' onClick={handleReset} className='bg-white text-[#242424] p-3 rounded-md mt-4 active:scale-110'>Reset</button>
-				<button type='button' onClick={handleFill} className='bg-white text-[#242424] p-3 rounded-md mt-4 active:scale-110'>Fill</button>
+				<button type='button' onClick={handleFill} className='bg-white text-[#242424] p-3 rounded-md mt-4 active:scale-110'>{isFilling ? 'Filling...' : 'Fill'}</button>
 				<button type='button' onClick={handleSubmit} className='bg-white text-[#242424] p-3 rounded-md mt-4 active:scale-110'>{solving ? 'Solving...' : 'Solve'}</button>
 			</div>
 		</>
