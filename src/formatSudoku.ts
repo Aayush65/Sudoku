@@ -1,5 +1,5 @@
 // formats the sudoku correctly according to rows and cols instead of boxes so that it can be solved
-function formatSudoku(sudoku: number[][]): number[][] {
+function formatSudoku(sudoku: any[][]): any[][] {
     const newSudoku = Array(9).fill('').map(() => Array(9).fill(0));
     for (let i = 0; i < 9; i++) {
       for (let j = 0; j < 9; j++) {

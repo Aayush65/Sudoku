@@ -1,9 +1,9 @@
-import { formatSudoku, formatIndex } from "./formatSudoku";
+import { formatSudoku } from "./formatSudoku";
 
 // Check if the sudoku is valid
-function isValid(grid: number[][]): number[][] {
+function isValid(grid: number[][]): boolean[][] {
   const sudoku = formatSudoku(grid);
-  const invalidSet = new Set<string>();
+  const invalids: boolean[][] = Array(9).fill(false).map(() => Array(9).fill(false));
 
   // checking row
   for (let i = 0; i < 9; i ++) {
@@ -12,7 +12,17 @@ function isValid(grid: number[][]): number[][] {
       if (!sudoku[i][j])
         continue;
       if (row.has(sudoku[i][j]))
-        invalidSet.add(formatIndex(i, j)[0] + '' + formatIndex(i, j)[1]);
+        invalids[i][j] = true;
+      row.add(sudoku[i][j]);
+    }    
+  }
+  for (let i = 8; i > -1; i --) {
+    const row = new Set();
+    for (let j = 8; j > -1; j --) {
+      if (!sudoku[i][j])
+        continue;
+      if (row.has(sudoku[i][j]))
+        invalids[i][j] = true;
       row.add(sudoku[i][j]);
     }    
   }
@@ -24,7 +34,17 @@ function isValid(grid: number[][]): number[][] {
       if (!sudoku[j][i])
         continue;
       if (col.has(sudoku[j][i]))
-        invalidSet.add(formatIndex(j, i)[0] + '' + formatIndex(j, i)[1]);
+        invalids[j][i] = true;
+      col.add(sudoku[j][i]);
+    }    
+  }
+  for (let i = 8; i > -1; i --) {
+    const col = new Set();
+    for (let j = 8; j > -1; j --) {
+      if (!sudoku[j][i])
+        continue;
+      if (col.has(sudoku[j][i]))
+        invalids[j][i] = true;
       col.add(sudoku[j][i]);
     }    
   }
@@ -38,15 +58,24 @@ function isValid(grid: number[][]): number[][] {
       if (!sudoku[x][y])
         continue;
       if (box.has(sudoku[x][y]))
-        invalidSet.add(formatIndex(x, y)[0] + '' + formatIndex(x, y)[1]);
+        invalids[x][y] = true;
+      box.add(sudoku[x][y]);
+    }
+  }
+  for (let i = 8; i > -1; i --) {
+    const box = new Set();
+    for (let j = 8; j > -1; j --) {
+      const x = Math.floor(i / 3) * 3 + Math.floor(j / 3);
+      const y = (i % 3) * 3 + j % 3;
+      if (!sudoku[x][y])
+        continue;
+      if (box.has(sudoku[x][y]))
+        invalids[x][y] = true;
       box.add(sudoku[x][y]);
     }
   }
 
-  const invalids: number[][] = [];
-  for (let coord of invalidSet)
-    invalids.push([parseInt(coord[0]), parseInt(coord[1])])
-  return invalids;
+  return formatSudoku(invalids);
 };
 
 export default isValid
