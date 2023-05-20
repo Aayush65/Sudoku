@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import solveSudoku from './sudoku';
 import isValid from './validSudoku';
 import './App.css';
@@ -22,7 +22,14 @@ function App() {
   const [grid, setGrid] = useState(Array(9).fill('').map(() => Array(9).fill(0)));
   const [solving, setSolving] = useState(false);
   const [inValids, setInValids] = useState<number[][]>([]);
+  const [isFilling, setIsFilling] = useState(false);
   
+  useEffect(()  => {
+    if (isFilling) {
+      handleFill();
+      setIsFilling(false);
+  }}, [])
+
   function handleChange(row: number, col: number, val: number) {
     if (val > 9 || val < 0) return;
     const newGrid = [...grid];
@@ -53,6 +60,14 @@ function App() {
     setGrid(Array(9).fill('').map(() => Array(9).fill(0)));
     setInValids([]);
   };
+
+  async function handleFill() {
+    setIsFilling(true);
+    const apiCall = await fetch('https://sugoku.onrender.com/board?difficulty=medium');
+    const data = await apiCall.json();
+    const randomSudoku = data.board;
+    setGrid(randomSudoku);
+  }
   
   return (
     <>
@@ -69,6 +84,7 @@ function App() {
       </div>
       <div className='flex justify-around'>
         <button type='button' onClick={handleReset} className='bg-white text-[#242424] p-3 rounded-md mt-4 active:scale-110'>Reset</button>
+        <button type='button' onClick={handleFill} className='bg-white text-[#242424] p-3 rounded-md mt-4 active:scale-110'>Fill</button>
         <button type='button' onClick={handleSubmit} className='bg-white text-[#242424] p-3 rounded-md mt-4 active:scale-110'>{solving ? 'Solving...' : 'Solve'}</button>
       </div>
     </>
