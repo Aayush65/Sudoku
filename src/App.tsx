@@ -63,12 +63,12 @@ function App() {
   
   return (
     <>
-      <div className='border-white border-4 w-[30rem] h-[30rem] flex flex-wrap justify-center gap-3 p-2'>
+      <div className='border-white border-4 w-[30rem] h-[30rem] flex flex-wrap justify-center gap-3 p-2 bg-[#827b7b]'>
         {grid.map((row, r) => (
           <div key={r} className='w-[9rem] h-[9rem] flex justify-center flex-wrap'>
             {row.map((col, c) => (
               <div key={c} className='w-[3rem] h-[3rem] border-white border-2'>
-                <input value={col} className={`w-full h-full text-center text-[white] focus:bg-[#4f4f4f] hover:cursor-pointer focus:hover:cursor-pointer ${inValids.length && inValids.has([r, c]) ? 'bg-[#dc2d2d]' : ''} ${solving ? 'cursor-not-allowed' : ''}`} onChange={(e) => {handleChange(r, c, parseInt(e.target.value.slice(-1)) || 0)}} />
+                <input value={col? col: ''} className={`w-full h-full text-center text-[white] focus:bg-[#4f4f4f] hover:cursor-pointer focus:hover:cursor-pointer ${inValids.length && inValids.has([r, c]) ? 'bg-[#dc2d2d]' : ''} ${solving ? 'cursor-not-allowed' : ''}`} onChange={(e) => {handleChange(r, c, parseInt(e.target.value.slice(-1)) || 0)}} />
               </div>
             ))}
           </div>
