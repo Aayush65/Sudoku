@@ -53,7 +53,16 @@ function App() {
 	async function handleFill() {
 		setIsFilling(true);
 		handleReset();
-		const apiCall = await fetch('https://sugoku.onrender.com/board?difficulty=medium');
+		
+		// Aborting after 1.5s
+		const abortRequest = new AbortController();
+		const abortTimeOut = setTimeout(() => {
+			abortRequest.abort(); 
+			setIsFilling(false);
+		}, 2500);
+
+		const apiCall = await fetch('https://sugoku.onrender.com/board?difficulty=medium', abortRequest);
+		clearTimeout(abortTimeOut);
 		const data = await apiCall.json();
 		const randomSudoku = formatSudoku(data.board);
 
@@ -92,9 +101,9 @@ function App() {
 				))}
 			</div>
 			<div className='flex justify-around'>
-				<button type='button' onClick={handleReset} className='bg-white text-[#242424] p-3 rounded-md mt-4 active:scale-110'>Reset</button>
-				<button type='button' onClick={handleFill} className='bg-white text-[#242424] p-3 rounded-md mt-4 active:scale-110'>{isFilling ? 'Filling...' : 'Fill'}</button>
-				<button type='button' onClick={handleSubmit} className='bg-white text-[#242424] p-3 rounded-md mt-4 active:scale-110'>{solving ? 'Solving...' : 'Solve'}</button>
+				<button type='button' disabled={isFilling} onClick={handleReset} className={`bg-white text-[#242424] p-3 rounded-md mt-4 active:scale-110 ${isFilling ? 'bg-[#646464]' : ''}`}>Reset</button>
+				<button type='button' disabled={isFilling} onClick={handleFill} className='bg-white text-[#242424] p-3 rounded-md mt-4 active:scale-110'>{isFilling ? 'Filling...' : 'Fill'}</button>
+				<button type='button' disabled={isFilling} onClick={handleSubmit} className={`bg-white text-[#242424] p-3 rounded-md mt-4 active:scale-110 ${isFilling ? 'bg-[#646464]' : ''}`}>{solving ? 'Solving...' : 'Solve'}</button>
 			</div>
 		</>
 	)
