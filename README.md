@@ -1,6 +1,8 @@
 # Sudoku
 
-A Wordle-inspired website. You can show your command of English vocabulary in this game.
+A website made for solving and playing Sudokus.
+
+Sharpen your mind or kill your boredom with this interactive and classic game.
 
 You can play this amazing game [here](https://sudoku.aayush65.com)
 
@@ -10,7 +12,7 @@ You can play this amazing game [here](https://sudoku.aayush65.com)
 - Clean and Minimalistic UI
 - Can complete any unfilled sudoku
 - Generates incomplete sudokus (unique solution)
-- Wrong inputs / Collision visualiser
+- Wrong inputs / Collision visualizer
 
 ## Tech Stack
 
